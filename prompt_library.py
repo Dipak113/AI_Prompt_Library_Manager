@@ -9,7 +9,7 @@ import os
 import random
 from datetime import date
 
-DATA_FILE = os.path.join(os.path.dirname(__file__), "prompts.json")
+DATA_FILE = os.path.join(os.path.dirname(__file__), "prompts.json")  # default JSON "database" file
 
 
 # ---------------------------------------------------------------------------
@@ -17,6 +17,7 @@ DATA_FILE = os.path.join(os.path.dirname(__file__), "prompts.json")
 # ---------------------------------------------------------------------------
 
 def load_prompts(path=DATA_FILE):
+    # Read the whole prompt list from disk; empty list if the file doesn't exist yet
     if not os.path.exists(path):
         return []
     with open(path, "r", encoding="utf-8") as f:
@@ -24,15 +25,18 @@ def load_prompts(path=DATA_FILE):
 
 
 def save_prompts(prompts, path=DATA_FILE):
+    # Overwrite the JSON file with the current in-memory list
     with open(path, "w", encoding="utf-8") as f:
         json.dump(prompts, f, indent=2)
 
 
 def next_id(prompts):
+    # Next free id = highest existing id + 1 (1 if the library is empty)
     return max((p["id"] for p in prompts), default=0) + 1
 
 
 def find_prompt(prompts, prompt_id):
+    # Linear lookup by id; returns None if not found
     for p in prompts:
         if p["id"] == prompt_id:
             return p
@@ -44,6 +48,7 @@ def find_prompt(prompts, prompt_id):
 # ---------------------------------------------------------------------------
 
 def add_prompt(prompts, title, text, category, ai_tool, rating, favorite=False, date_added=None):
+    # Build a new prompt dict, append it in place, and return it
     prompt = {
         "id": next_id(prompts),
         "title": title.strip(),
@@ -59,6 +64,7 @@ def add_prompt(prompts, title, text, category, ai_tool, rating, favorite=False, 
 
 
 def update_prompt(prompts, prompt_id, title=None, text=None, category=None, ai_tool=None, rating=None):
+    # Only overwrite fields that were actually passed in (None = "leave unchanged")
     p = find_prompt(prompts, prompt_id)
     if not p:
         return None
@@ -76,6 +82,7 @@ def update_prompt(prompts, prompt_id, title=None, text=None, category=None, ai_t
 
 
 def delete_prompt(prompts, prompt_id):
+    # Remove the prompt with this id from the list in place; False if it wasn't found
     idx = next((i for i, p in enumerate(prompts) if p["id"] == prompt_id), None)
     if idx is None:
         return False
@@ -84,6 +91,7 @@ def delete_prompt(prompts, prompt_id):
 
 
 def toggle_favorite(prompts, prompt_id):
+    # Flip the favorite flag on/off for one prompt
     p = find_prompt(prompts, prompt_id)
     if p:
         p["favorite"] = not p.get("favorite", False)
@@ -95,6 +103,7 @@ def toggle_favorite(prompts, prompt_id):
 # ---------------------------------------------------------------------------
 
 def search_prompts(prompts, category=None, ai_tool=None, keyword=None, favorites_only=False):
+    # Apply each filter only if it was given, narrowing the result set step by step
     results = prompts
     if category:
         results = [p for p in results if p["category"].lower() == category.lower()]
@@ -112,6 +121,7 @@ def search_prompts(prompts, category=None, ai_tool=None, keyword=None, favorites
 
 
 def sort_prompts(prompts, by="rating", descending=True):
+    # Look up the sort key function by name, defaulting to rating
     key_fns = {
         "rating": lambda p: p["rating"],
         "date": lambda p: p["date_added"],
@@ -122,6 +132,7 @@ def sort_prompts(prompts, by="rating", descending=True):
 
 
 def random_prompt(prompts):
+    # Used by the Dashboard's "Surprise Me" button
     return random.choice(prompts) if prompts else None
 
 
@@ -130,16 +141,19 @@ def random_prompt(prompts):
 # ---------------------------------------------------------------------------
 
 def highest_rated_prompt(prompts):
+    # Single prompt with the max rating (ties broken by list order)
     if not prompts:
         return None
     return max(prompts, key=lambda p: p["rating"])
 
 
 def top_rated(prompts, n=5):
+    # Leaderboard: top n prompts by rating, highest first
     return sort_prompts(prompts, by="rating", descending=True)[:n]
 
 
 def _count_by(prompts, field):
+    # Generic tally helper shared by count_by_category / count_by_tool
     counts = {}
     for p in prompts:
         counts[p[field]] = counts.get(p[field], 0) + 1
@@ -155,6 +169,7 @@ def count_by_tool(prompts):
 
 
 def rating_distribution(prompts):
+    # Bucket every prompt into a 1-5 star bucket for the histogram chart
     buckets = {str(i): 0 for i in range(1, 6)}
     for p in prompts:
         star = min(5, max(1, round(p["rating"])))
@@ -163,14 +178,17 @@ def rating_distribution(prompts):
 
 
 def categories(prompts):
+    # Unique, alphabetically sorted category list (used to populate filter dropdowns)
     return sorted({p["category"] for p in prompts})
 
 
 def ai_tools(prompts):
+    # Unique, alphabetically sorted AI tool list (used to populate filter dropdowns)
     return sorted({p["ai_tool"] for p in prompts})
 
 
 def library_summary(prompts):
+    # Aggregate headline numbers shown on the Dashboard / Summary pages
     if not prompts:
         return {
             "total_prompts": 0,
@@ -196,10 +214,12 @@ def library_summary(prompts):
 # ---------------------------------------------------------------------------
 
 def prompts_to_json(prompts):
+    # Serialize the whole library for the download button
     return json.dumps(prompts, indent=2)
 
 
 def merge_imported(prompts, imported_list):
+    # Append externally-imported prompts with freshly assigned ids so they never collide with existing ones
     start_id = next_id(prompts)
     added = 0
     for offset, item in enumerate(imported_list):

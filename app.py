@@ -16,29 +16,34 @@ st.set_page_config(
 
 
 def load_css():
+    # Inject style.css into the page — Streamlit's only way to apply custom CSS
     css_path = Path(__file__).parent / "style.css"
     st.markdown(f"<style>{css_path.read_text()}</style>", unsafe_allow_html=True)
 
 
 load_css()
 
+# st.session_state persists across reruns within one browser session; this block
+# only runs once per session, on first load
 if "prompts" not in st.session_state:
     st.session_state.prompts = lib.load_prompts()
 if "editing_id" not in st.session_state:
-    st.session_state.editing_id = None
+    st.session_state.editing_id = None  # id of the prompt currently being edited, if any
 if "confirm_delete_id" not in st.session_state:
-    st.session_state.confirm_delete_id = None
+    st.session_state.confirm_delete_id = None  # id awaiting delete confirmation, if any
 if "surprise_id" not in st.session_state:
-    st.session_state.surprise_id = None
+    st.session_state.surprise_id = None  # id shown by the "Surprise Me" widget
 
 prompts = st.session_state.prompts
 
 
 def esc(text):
+    # Escape user-entered text before dropping it into raw HTML (avoids markup/XSS breakage)
     return html.escape(str(text))
 
 
 def rating_class(rating):
+    # Maps a rating to a CSS color class for the rating pill
     if rating >= 4.5:
         return "rating-good"
     if rating >= 3.5:
@@ -47,6 +52,7 @@ def rating_class(rating):
 
 
 def to_df(rows):
+    # Convert a list of prompt dicts into a DataFrame with a fixed column order for st.dataframe
     if not rows:
         return pd.DataFrame(
             columns=["id", "title", "category", "ai_tool", "rating", "favorite", "date_added", "text"]
@@ -59,12 +65,12 @@ def to_df(rows):
 def static_bar_chart(labels, values, color, horizontal=False):
     """A fully static (no-animation) bar chart rendered as a PNG via matplotlib."""
     fig, ax = plt.subplots(figsize=(6, 3.0))
-    fig.patch.set_alpha(0)
+    fig.patch.set_alpha(0)  # transparent figure background so the glass-card theme shows through
     ax.set_facecolor("none")
 
     if horizontal:
         ax.barh(labels, values, color=color, edgecolor="none")
-        ax.invert_yaxis()
+        ax.invert_yaxis()  # keep the first/highest category at the top
         ax.grid(axis="x", color="#9fb0d0", alpha=0.15, linewidth=0.6)
     else:
         ax.bar(labels, values, color=color, edgecolor="none")
@@ -73,13 +79,14 @@ def static_bar_chart(labels, values, color, horizontal=False):
     ax.set_axisbelow(True)
     ax.tick_params(colors="#9fb0d0", labelsize=9)
     for spine in ax.spines.values():
-        spine.set_visible(False)
+        spine.set_visible(False)  # drop the default plot border for a cleaner look
     fig.tight_layout()
     st.pyplot(fig, use_container_width=True)
-    plt.close(fig)
+    plt.close(fig)  # free the figure so repeated reruns don't leak memory
 
 
 def render_hero():
+    # Top-of-page title/status banner, shared by every page
     st.markdown(
         f"""
         <div class="hero-wrap">
@@ -93,6 +100,7 @@ def render_hero():
 
 
 def stat_tile(col, number, label):
+    # Small glass-card metric tile, placed into whichever column is passed in
     col.markdown(
         f"""<div class="stat-tile"><div class="stat-num">{esc(number)}</div>
         <div class="stat-label">{esc(label)}</div></div>""",
@@ -101,9 +109,10 @@ def stat_tile(col, number, label):
 
 
 def render_prompt_card(p):
+    # Renders one prompt as a bordered card, plus its favorite/edit/delete controls
     with st.container(border=True):
         if st.session_state.editing_id == p["id"]:
-            render_edit_form(p)
+            render_edit_form(p)  # swap the card body for an inline edit form
             return
 
         fav_badge = '<span class="badge badge-fav">★ FAVORITE</span>' if p.get("favorite") else ""
@@ -124,13 +133,14 @@ def render_prompt_card(p):
         st.code(p["text"], language=None)
 
         if st.session_state.confirm_delete_id == p["id"]:
+            # Two-step delete: this branch only shows after the user already clicked "Delete" once
             st.warning(f"Delete '{p['title']}' permanently?")
             c1, c2 = st.columns(2)
             if c1.button("✅ Confirm delete", key=f"confirm_del_{p['id']}", use_container_width=True):
                 lib.delete_prompt(st.session_state.prompts, p["id"])
                 lib.save_prompts(st.session_state.prompts)
                 st.session_state.confirm_delete_id = None
-                st.rerun()
+                st.rerun()  # force a clean redraw now that the prompt is gone
             if c2.button("✖ Cancel", key=f"cancel_del_{p['id']}", use_container_width=True):
                 st.session_state.confirm_delete_id = None
                 st.rerun()
@@ -142,14 +152,15 @@ def render_prompt_card(p):
                 lib.save_prompts(st.session_state.prompts)
                 st.rerun()
             if c2.button("✏ Edit", key=f"edit_{p['id']}", use_container_width=True):
-                st.session_state.editing_id = p["id"]
+                st.session_state.editing_id = p["id"]  # next rerun shows the edit form for this card
                 st.rerun()
             if c3.button("🗑 Delete", key=f"del_{p['id']}", use_container_width=True):
-                st.session_state.confirm_delete_id = p["id"]
+                st.session_state.confirm_delete_id = p["id"]  # next rerun shows the confirm step
                 st.rerun()
 
 
 def render_edit_form(p):
+    # Inline form pre-filled with the prompt's current values; replaces the card body while editing
     st.markdown('<div class="section-tag">Editing prompt</div>', unsafe_allow_html=True)
     with st.form(f"edit_form_{p['id']}"):
         title = st.text_input("Title", value=p["title"])
@@ -168,7 +179,7 @@ def render_edit_form(p):
             title=title, text=text, category=category, ai_tool=ai_tool, rating=rating,
         )
         lib.save_prompts(st.session_state.prompts)
-        st.session_state.editing_id = None
+        st.session_state.editing_id = None  # exit edit mode
         st.rerun()
     if cancel_clicked:
         st.session_state.editing_id = None
@@ -177,6 +188,7 @@ def render_edit_form(p):
 
 render_hero()
 
+# Sidebar radio fakes multi-page navigation: the chosen label drives the if/elif chain below
 with st.sidebar:
     st.markdown('<div class="section-tag">Navigation</div>', unsafe_allow_html=True)
     page = st.radio(
@@ -198,6 +210,8 @@ with st.sidebar:
     stat_tile(s1, len(prompts), "Prompts")
     stat_tile(s2, sum(1 for p in prompts if p.get("favorite")), "Favorites")
 
+# Every widget interaction reruns this whole script top-to-bottom; `page` decides which
+# block below actually renders on this run
 if page == "🏠 Dashboard":
     summary = lib.library_summary(prompts)
     c1, c2, c3, c4, c5 = st.columns(5)
@@ -227,7 +241,7 @@ if page == "🏠 Dashboard":
             if st.session_state.surprise_id is not None:
                 surprise = lib.find_prompt(prompts, st.session_state.surprise_id)
             if not surprise and prompts:
-                surprise = prompts[0]
+                surprise = prompts[0]  # fallback so the panel isn't empty before the first click
             if surprise:
                 st.markdown(f"**{esc(surprise['title'])}**")
                 st.markdown(
@@ -247,9 +261,9 @@ elif page == "📚 View Prompts":
     if not ordered:
         st.info("No prompts yet. Add one from the 'Add Prompt' page.")
     else:
-        cols = st.columns(2)
+        cols = st.columns(2)  # two-column card grid
         for i, p in enumerate(ordered):
-            with cols[i % 2]:
+            with cols[i % 2]:  # alternate cards between the two columns
                 render_prompt_card(p)
 
 elif page == "🔍 Search":
@@ -263,7 +277,7 @@ elif page == "🔍 Search":
 
     results = lib.search_prompts(
         prompts,
-        category=None if category == "Any" else category,
+        category=None if category == "Any" else category,  # "Any" means "no filter"
         ai_tool=None if ai_tool == "Any" else ai_tool,
         keyword=keyword or None,
         favorites_only=favorites_only,
@@ -373,6 +387,6 @@ elif page == "📈 Summary & Export":
                     added = lib.merge_imported(st.session_state.prompts, imported_list)
                     lib.save_prompts(st.session_state.prompts)
                     st.success(f"Imported {added} prompt(s).")
-                    st.rerun()
+                    st.rerun()  # refresh so the newly imported prompts show up everywhere
                 except Exception as exc:
                     st.error(f"Could not import file: {exc}")
