@@ -6,7 +6,8 @@
     "category": "Writing",
     "ai_tool": "ChatGPT",
     "rating": 4.5,
-    "date_added": "2026-06-01"
+    "date_added": "2026-06-01",
+    "favorite": false
   },
   {
     "id": 2,
@@ -15,7 +16,8 @@
     "category": "Coding",
     "ai_tool": "Claude",
     "rating": 4.8,
-    "date_added": "2026-06-03"
+    "date_added": "2026-06-03",
+    "favorite": true
   },
   {
     "id": 3,
@@ -24,7 +26,8 @@
     "category": "Image Generation",
     "ai_tool": "Midjourney",
     "rating": 4.2,
-    "date_added": "2026-06-05"
+    "date_added": "2026-06-05",
+    "favorite": false
   },
   {
     "id": 4,
@@ -33,7 +36,8 @@
     "category": "Coding",
     "ai_tool": "ChatGPT",
     "rating": 4.0,
-    "date_added": "2026-06-06"
+    "date_added": "2026-06-06",
+    "favorite": false
   },
   {
     "id": 5,
@@ -42,7 +46,8 @@
     "category": "Marketing",
     "ai_tool": "Claude",
     "rating": 3.9,
-    "date_added": "2026-06-08"
+    "date_added": "2026-06-08",
+    "favorite": false
   },
   {
     "id": 6,
@@ -51,7 +56,8 @@
     "category": "Data Analysis",
     "ai_tool": "Gemini",
     "rating": 4.3,
-    "date_added": "2026-06-10"
+    "date_added": "2026-06-10",
+    "favorite": false
   },
   {
     "id": 7,
@@ -60,7 +66,8 @@
     "category": "Coding",
     "ai_tool": "GitHub Copilot",
     "rating": 4.6,
-    "date_added": "2026-06-12"
+    "date_added": "2026-06-12",
+    "favorite": true
   },
   {
     "id": 8,
@@ -69,7 +76,8 @@
     "category": "Marketing",
     "ai_tool": "ChatGPT",
     "rating": 4.1,
-    "date_added": "2026-06-14"
+    "date_added": "2026-06-14",
+    "favorite": false
   },
   {
     "id": 9,
@@ -78,7 +86,8 @@
     "category": "Image Generation",
     "ai_tool": "Midjourney",
     "rating": 4.7,
-    "date_added": "2026-06-16"
+    "date_added": "2026-06-16",
+    "favorite": true
   },
   {
     "id": 10,
@@ -87,7 +96,8 @@
     "category": "Productivity",
     "ai_tool": "Claude",
     "rating": 4.4,
-    "date_added": "2026-06-18"
+    "date_added": "2026-06-18",
+    "favorite": true
   },
   {
     "id": 11,
@@ -96,7 +106,8 @@
     "category": "Data Analysis",
     "ai_tool": "ChatGPT",
     "rating": 3.8,
-    "date_added": "2026-06-20"
+    "date_added": "2026-06-20",
+    "favorite": false
   },
   {
     "id": 12,
@@ -105,6 +116,7 @@
     "category": "Coding",
     "ai_tool": "Claude",
     "rating": 4.0,
-    "date_added": "2026-06-22"
+    "date_added": "2026-06-22",
+    "favorite": false
   }
 ]
