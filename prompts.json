@@ -1,0 +1,110 @@
+[
+  {
+    "id": 1,
+    "title": "Blog Post Outline Generator",
+    "text": "Create a detailed blog post outline on the topic: {topic}. Include an introduction, 4-6 subheadings with key points, and a conclusion.",
+    "category": "Writing",
+    "ai_tool": "ChatGPT",
+    "rating": 4.5,
+    "date_added": "2026-06-01"
+  },
+  {
+    "id": 2,
+    "title": "Python Code Reviewer",
+    "text": "Review the following Python code for bugs, readability, and performance issues. Suggest specific improvements with code examples:\n\n{code}",
+    "category": "Coding",
+    "ai_tool": "Claude",
+    "rating": 4.8,
+    "date_added": "2026-06-03"
+  },
+  {
+    "id": 3,
+    "title": "Fantasy Landscape Prompt",
+    "text": "A sprawling fantasy landscape at golden hour, floating islands, waterfalls, ultra-detailed, cinematic lighting, 8k, artstation trending.",
+    "category": "Image Generation",
+    "ai_tool": "Midjourney",
+    "rating": 4.2,
+    "date_added": "2026-06-05"
+  },
+  {
+    "id": 4,
+    "title": "SQL Query Explainer",
+    "text": "Explain what the following SQL query does in plain English, step by step:\n\n{query}",
+    "category": "Coding",
+    "ai_tool": "ChatGPT",
+    "rating": 4.0,
+    "date_added": "2026-06-06"
+  },
+  {
+    "id": 5,
+    "title": "Marketing Email Copy",
+    "text": "Write a persuasive marketing email announcing {product}. Tone: friendly and energetic. Include a clear call-to-action.",
+    "category": "Marketing",
+    "ai_tool": "Claude",
+    "rating": 3.9,
+    "date_added": "2026-06-08"
+  },
+  {
+    "id": 6,
+    "title": "Exploratory Data Analysis Plan",
+    "text": "Given a dataset with columns {columns}, propose a step-by-step exploratory data analysis plan, including the charts you would create and why.",
+    "category": "Data Analysis",
+    "ai_tool": "Gemini",
+    "rating": 4.3,
+    "date_added": "2026-06-10"
+  },
+  {
+    "id": 7,
+    "title": "Unit Test Generator",
+    "text": "Write unit tests for the following function using pytest, covering normal cases, edge cases, and invalid inputs:\n\n{function}",
+    "category": "Coding",
+    "ai_tool": "GitHub Copilot",
+    "rating": 4.6,
+    "date_added": "2026-06-12"
+  },
+  {
+    "id": 8,
+    "title": "Product Naming Brainstorm",
+    "text": "Brainstorm 15 creative names for a {product_description}. Include a one-line rationale for each name.",
+    "category": "Marketing",
+    "ai_tool": "ChatGPT",
+    "rating": 4.1,
+    "date_added": "2026-06-14"
+  },
+  {
+    "id": 9,
+    "title": "Cyberpunk Character Portrait",
+    "text": "Portrait of a cyberpunk street samurai, neon-lit rain-soaked alley, intricate cybernetic details, dramatic rim lighting, hyperrealistic.",
+    "category": "Image Generation",
+    "ai_tool": "Midjourney",
+    "rating": 4.7,
+    "date_added": "2026-06-16"
+  },
+  {
+    "id": 10,
+    "title": "Meeting Notes Summarizer",
+    "text": "Summarize the following meeting transcript into key decisions, action items (with owners), and open questions:\n\n{transcript}",
+    "category": "Productivity",
+    "ai_tool": "Claude",
+    "rating": 4.4,
+    "date_added": "2026-06-18"
+  },
+  {
+    "id": 11,
+    "title": "Dataset Cleaning Checklist",
+    "text": "Given a raw dataset described as {description}, list a thorough data cleaning checklist covering missing values, duplicates, outliers, and type consistency.",
+    "category": "Data Analysis",
+    "ai_tool": "ChatGPT",
+    "rating": 3.8,
+    "date_added": "2026-06-20"
+  },
+  {
+    "id": 12,
+    "title": "Regex Builder",
+    "text": "Write a regular expression that matches {pattern_description}. Explain each part of the regex.",
+    "category": "Coding",
+    "ai_tool": "Claude",
+    "rating": 4.0,
+    "date_added": "2026-06-22"
+  }
+]
